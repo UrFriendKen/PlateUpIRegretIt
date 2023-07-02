@@ -1,18 +1,14 @@
 ﻿using Kitchen;
 using KitchenData;
-using KitchenLib.Utils;
-using System;
+using KitchenMods;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 namespace KitchenIRegretIt
 {
-    public class CreateBookingDeskAtStartOfNight : StartOfNightSystem
+    public class CreateBookingDeskAtStartOfNight : StartOfNightSystem, IModSystem
     {
         EntityQuery appliancesQuery;
         protected override void Initialise()
@@ -42,7 +38,7 @@ namespace KitchenIRegretIt
 
         protected override void OnUpdate()
         {
-            if (PreferenceUtils.Get<KitchenLib.BoolPreference>(Main.MOD_GUID, Main.ENABLED_ID).Value)
+            if (Main.PrefManager.Get<bool>(Main.ENABLED_ID))
             {
                 Main.LogInfo("Checking if Booking Desk is missing");
                 NativeArray<Entity> entities = appliancesQuery.ToEntityArray(Allocator.Temp);
@@ -76,7 +72,7 @@ namespace KitchenIRegretIt
                         {
                             candidate = GetFallbackTile();
                         }
-                        if (PreferenceUtils.Get<KitchenLib.BoolPreference>(Main.MOD_GUID, Main.AS_PARCEL_ID).Value)
+                        if (Main.PrefManager.Get<bool>(Main.AS_PARCEL_ID))
                         {
                             Main.LogInfo("Creating Booking Desk as parcel");
                             PostHelpers.CreateApplianceParcel(base.EntityManager, candidate, AssetReference.BookingDesk);
